@@ -72,9 +72,6 @@ class Net(nn.Module):
     def save(self, path):
         torch.save(self, path)
 
-    def __str__(self):
-        return 'rnn_model'
-
     @classmethod
     def model_type(cls):
         return 'rnn'

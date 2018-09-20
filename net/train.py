@@ -1,4 +1,3 @@
-import os.path as path
 import random
 import torch
 import torch.nn as nn
@@ -7,12 +6,10 @@ from torch.utils.data.dataloader import DataLoader
 from yxt_nlp_toolkit.common import Lang
 from yxt_nlp_toolkit.embedding import GloveEmbedding
 
-from conf import device, lang_pt, model_dump_path
+from conf import device, lang_pt, model_dump_path, glove_embedding_path
 from dataset import load_pickled_dataset
 from net.cnn import Net as CnnNet
 from net.rnn import Net as RnnNet
-
-_glove_embedding_path = path.expanduser('~/nlp/glove.zh.426K.200d.txt')
 
 
 def dump_path_of(model):
@@ -29,7 +26,7 @@ def create_new_model(data_loader, model_type):
     else:
         hidden_size = 256
         net = RnnNet(lang=lang, embedding_dim=embedding_dim, hidden_size=hidden_size, out_size=out_size)
-    embedding = GloveEmbedding(model_path=_glove_embedding_path)
+    embedding = GloveEmbedding(model_path=glove_embedding_path)
     net.init_params(embedding)
     return net
 
@@ -66,7 +63,8 @@ def do_train(model, data_loader):
                 print(count, '=>', total_loss)
                 total_loss = .0
             if count % 100000 == 0:
-                model.save('model.pt')
+                dump_name = 'model.' + model.model_type()
+                model.save(dump_name)
 
 
 class RnnDataLoader:
